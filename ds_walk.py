@@ -23,10 +23,10 @@ def getArgs():
 def firstCheck(url):
     s = requests.get(url + "/.ds_store")
     if s.status_code == 200:
-        print GREEN + "[!] .ds_store file is present on the webserver." + END
+        print(GREEN + "[!] .ds_store file is present on the webserver." + END)
         ds_index = s.url
-        print GREEN + "[+] Enumerating directories based on .ds_server file:" + END
-        print "----------------------------"
+        print(GREEN + "[+] Enumerating directories based on .ds_server file:" + END)
+        print("----------------------------")
         return ds_index
 
     else:
@@ -54,8 +54,8 @@ def readDS_store(ds,url):
             if dir not in final_list:
                 final_list.append(dir)
         for item in final_list:
-            print "[!] " + url + "/" + item
-        print "----------------------------"
+            print("[!] " + url + "/" + item)
+        print("----------------------------")
         return final_list
 
 #Recursive function to traverse through all directories
@@ -79,8 +79,8 @@ if __name__=="__main__":
     ds_file = saveIndexDS()
     site_map = readDS_store(ds_file,url)
     recurseDS(site_map,url)
-    print GREEN + "[*] Finished traversing. No remaining .ds_store files present." + END
-    print GREEN + "[*] Cleaning up .ds_store files saved to disk." + END
+    print(GREEN + "[*] Finished traversing. No remaining .ds_store files present." + END)
+    print(GREEN + "[*] Cleaning up .ds_store files saved to disk." + END)
     os.remove('tmp_ds')
     os.remove('ds_store_index')
     sys.exit(0)
