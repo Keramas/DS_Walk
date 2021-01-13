@@ -30,7 +30,7 @@ def firstCheck(url):
         return ds_index
 
     else:
-        print RED + "[X] .ds_store file not found in base directory." + END
+        print(RED + "[X] .ds_store file not found in base directory." + END)
         sys.exit(0)
 
 
