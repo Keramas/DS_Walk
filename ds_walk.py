@@ -6,6 +6,8 @@ import sys
 import argparse
 import dsstore
 
+requests.packages.urllib3.disable_warnings()
+
 RED = '\x1b[91m'
 GREEN = '\033[32m'
 END = '\033[0m'
@@ -21,7 +23,7 @@ def getArgs():
 
 #First check for .ds_store file
 def firstCheck(url):
-    s = requests.get(url + "/.ds_store")
+    s = requests.get(url + "/.DS_Store", verify=False)
     if s.status_code == 200:
         print(GREEN + "[!] .ds_store file is present on the webserver." + END)
         ds_index = s.url
@@ -36,7 +38,7 @@ def firstCheck(url):
 
 #Save index ds_store file
 def saveIndexDS():
-    index_ds = requests.get(url + "/.ds_store", allow_redirects=True)
+    index_ds = requests.get(url + "/.DS_Store", allow_redirects=True, verify=False)
     index_file = open('ds_store_index','wb').write(index_ds.content)
     index = 'ds_store_index'
     return index
@@ -60,10 +62,10 @@ def readDS_store(ds,url):
 
 #Recursive function to traverse through all directories
 def recurseDS(site_map,url):
-    dsfile = "/.ds_store"
+    dsfile = "/.DS_Store"
     for item in site_map:
         new_url = url + "/" + item
-        next_ds = requests.get(new_url + dsfile, allow_redirects=True)
+        next_ds = requests.get(new_url + dsfile, allow_redirects=True, verify=False)
         if next_ds.status_code == 401 or next_ds.status_code == 404:
             pass
         else:
@@ -74,13 +76,16 @@ def recurseDS(site_map,url):
 
 
 if __name__=="__main__":
-    url = getArgs()
-    ds_index = firstCheck(url)
-    ds_file = saveIndexDS()
-    site_map = readDS_store(ds_file,url)
-    recurseDS(site_map,url)
-    print(GREEN + "[*] Finished traversing. No remaining .ds_store files present." + END)
-    print(GREEN + "[*] Cleaning up .ds_store files saved to disk." + END)
-    os.remove('tmp_ds')
-    os.remove('ds_store_index')
-    sys.exit(0)
+    try:
+	    url = getArgs()
+	    ds_index = firstCheck(url)
+	    ds_file = saveIndexDS()
+	    site_map = readDS_store(ds_file,url)
+	    recurseDS(site_map,url)
+	    print(GREEN + "[*] Finished traversing. No remaining .ds_store files present." + END)
+	    print(GREEN + "[*] Cleaning up .ds_store files saved to disk." + END)
+	    os.remove('tmp_ds')
+	    os.remove('ds_store_index')
+	    sys.exit(0)
+    except:
+	    pass
